@@ -124,7 +124,19 @@ class SubscriptionBuilder
      */
     public function meteredPrice($price)
     {
-        return $this->price($price, null);
+        $options = is_array($price) ? $price : ['price' => $price];
+
+        if ($taxRates = $this->getPriceTaxRatesForPayload($price)) {
+            $options['tax_rates'] = $taxRates;
+        }
+
+        if (is_array($price)) {
+            $this->items[] = $options;
+        } else {
+            $this->items[$price] = $options;
+        }
+
+        return $this;
     }
 
     /**
